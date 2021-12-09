@@ -1,0 +1,90 @@
+2주차.. query
+
+데이터베이스 : 데이터를 효율적으로 저장해두는 시스템
+데이터를 쌓고, 추출 가능
+-원하는 데이터만을 추출하자
+
+MySQL:
+DBMS와 소통하기 위해 사용하는 언어!
+
+SELECT//
+Database에서 원하는 데이터를 가져오기 위해 사용
+update나 delete, drop등 다양한 작업이 가능하지만,
+매우 critical한 작업이 될 수 있기 때문에 권한이 매우 엄격
+
+SELECT o.gameId, summonerId, position, championId, result
+FROM p_opGameStats p
+INNER JOIN opGame o
+On p.gamdId = o.gameId
+WHERE p.createDate >= '2021-10-25'
+AND subType IN (420, 440)
+ORDER BY o.createDate DESC
+LIMIT 100;
+
+#콤마로 구분해서 여러 개 테이블에서 가져올 수 있음
+#SELECT *도 사용 가능하지만, 추천X (양이 너무 많다)
+#예약어(FROM, INNER JOIN ...)은 관행적으로 대문자
+#WHERE// 특정 조건 설정(OR사용은 비추<- 연산량 증가)
+10월25일 이후, SubType이 (420, 440)인 데이터만 (솔랭, 자랭)
+칼바람은 450이므로, 가져오지 않는다
+#ORDER BY로 정렬! (o.createDate를 내림차순으로 or ASC(오름차 // default: ASC)
+ORDER BY subType, result 이렇게도 가능
+#처음 돌리는 SQL문에는, 
+LIMIT을 설정해줘서 조금의 데이터로 생각대로 되나 확인
+#INNER JOIN을하면, 약간 AND과 비슷( 두 데이터 모두 있어야 병합)
+#ON을 하여, 같은 column을 join하자(gameId는 o, p에 모두 있다. --> gameId를 통해서 o, p를 join!!
+
+
+SELECT subType, count(gameId) AS gameCount(column이름을 정해주자)
+FROM opGame
+WHERE createDate >= '2021-10-25'
+GROUP BY subType
+HAVING gameCount >= 10000
+ORDER BY gameCount DESC;
+
+#gameId의 개수를 세기위한 함수도 들어갈 수 있다!
+#subType별로 몇개의 게임이 있는지 알 수 있다
+#HAVING: GROUP BY 한 후에 쓸수있는 WHERE절이라고 생각
+#즉, 1000판 이상인 subType만 select!
+
+
+
+한국에 있는 챌린저, 그마, 마스터가 몇명인가..?
+SELECT tier, count(summonerId) AS summonerCount
+FROM opSummonerLeague
+WHERE (queueType = 'RANKED_SOLO_5*5'
+	AND tier IN ('MASTER', 'GRANDMASTER', 	'CHALLENGER'))
+GROUP BY tier;
+
+opsummonerleague라는 테이블에서,
+솔랭인 게임타입에서,
+마스터, 그마, 챌린저인 티어조건을 걸어주고,
+걔들을 티어로 그룹핑을해서,
+센다
+
+partition, index를 적극활용해서 시간을 줄이자
+
+SELECT tier, queueType, count(summonerId) AS summonerCount
+FROM opSummonerLeague
+WHERE tier IN ('MASTER', 'GRANDMASTER', 'CHALLENGER')
+GROUP BY tier, queueType;
+ORDER BY queueType, tier DESC;
+
+
+#페이커가
+#올해에
+#칼바람나락을 몇판했는가
+
+SELECT championId, result
+
+
+#<table merge>과정!
+FROM p_opGameStats AS p
+INNER JOIN opGame AS o
+INNER JOIN opSummoner AS s
+WHERE p.gameId = o.gameId
+AND p.summonerId = s.id
+
+AND internalName = 'hideonbush'
+AND subType = 450
+AND p.createDate >= '2021-01-01';

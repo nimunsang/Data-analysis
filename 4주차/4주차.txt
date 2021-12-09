@@ -1,0 +1,11 @@
+칼바람나락 챔피언 분류
+1. 각 챔피언이 산 아이템 추출
+2. 챔피언 간 유사도 계산
+3. Hierarchial clustering을 통해 적정 수만큼 cluster 구분
+
+Cosine similarity..
+1. scale-free
+2. multi-dimensional set에 적용시키기 알맞음
+3. 값이 [0, 1]로 떨어지는 positive space에서 사용하기 적합
+4. 계산하기 쉬움
+
